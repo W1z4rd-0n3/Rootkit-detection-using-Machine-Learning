@@ -2,7 +2,7 @@ import subprocess
 
 #For python 3.7
 def run_volatility_plugin(plugin, args):
-    command = f"volatility -f /path/to/memory_dump {plugin} {args}"
+    command = f"volatility -f {memory_dump} --profile={profile} {plugin} {args}"
     result = subprocess.run(command, shell=True, capture_output=True, text=True)
     return result.stdout
 
@@ -14,6 +14,9 @@ def run_volatility_plugin(plugin, args):
     return stdout.decode('utf-8')
 
 if __name__ == "__main__":
+    memory_dump = input("Enter the memory dump path: ")
+    profile = input("Enter the image profile")
+    
     plugins = [
         ("modules", ""),
         ("modscan", ""),
@@ -33,7 +36,7 @@ if __name__ == "__main__":
     # Extracting the features to an output file
     with open(consolidated_output_file, 'w') as consolidated_output:
         for plugin, args in plugins:
-            plugin_output = run_volatility_plugin(plugin, args)
+            plugin_output = run_volatility_plugin(memory_dump, profile, plugin, args)
             consolidated_output.write(f"\n\n\n== {plugin} {args} ==\n")
             consolidated_output.write(plugin_output)
 
